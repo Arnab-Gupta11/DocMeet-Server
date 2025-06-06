@@ -15,6 +15,7 @@
   "author": "Arnab Gupta",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -22,6 +23,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.29",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
