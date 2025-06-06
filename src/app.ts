@@ -2,6 +2,8 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import os from 'os';
+import globalErrorHandler from './app/middlewares/globalErrorhandler';
+import notFound from './app/middlewares/notFound';
 
 const app: Application = express();
 const corsOptions: cors.CorsOptions = {
@@ -46,5 +48,10 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
     },
   });
 });
+
+//Global Error handler.
+app.use(globalErrorHandler);
+//Not Found Route.
+app.use(notFound);
 
 export default app;
