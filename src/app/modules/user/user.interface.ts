@@ -5,14 +5,21 @@ import { USER_ROLE } from './user.constant';
 // Interface for User Schema
 export interface IUser extends Document {
   _id: ObjectId;
+  fullName: string;
   email: string;
   password: string;
+  profileImage: string;
   gender: 'male' | 'female' | 'other';
   isVerified?: boolean;
   role: 'UNASSIGNED' | 'PATIENT' | 'DOCTOR' | 'ADMIN';
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type TUserPayload = Pick<
+  IUser,
+  'fullName' | 'email' | 'password' | 'gender'
+> & { confirmedPassword: string };
 
 export type TEmailVerification = {
   userId: ObjectId;

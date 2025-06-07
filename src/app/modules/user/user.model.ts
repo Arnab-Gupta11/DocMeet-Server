@@ -5,8 +5,10 @@ import config from '../../config';
 // Common User Schema for both Recruiters and Job Seekers
 const userSchema = new mongoose.Schema<IUser, UserModel>(
   {
+    fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    profileImage: { type: String, required: true },
     gender: {
       type: String,
       enum: ['male', 'female', 'other'],

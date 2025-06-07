@@ -1,9 +1,15 @@
 import { Router } from 'express';
-import { userController } from './user.controller';
+import { userControllers } from './user.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { createUserValidationSchema } from './user.validation';
 
 const router = Router();
 
 // Define routes
-router.get('/', userController.getAll);
+router.post(
+  '/',
+  validateRequest(createUserValidationSchema),
+  userControllers.createUser,
+);
 
-export default router;
+export const UserRoutes = router;

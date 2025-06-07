@@ -1,9 +1,20 @@
 import { Request, Response } from 'express';
-import { userService } from './user.service';
+import catchAsync from '../../utils/catchAsync';
+import { userServices } from './user.service';
+import { sendResponse } from '../../utils/sendResponse';
 
-export const userController = {
-  async getAll(req: Request, res: Response) {
-    const data = await userService.getAll();
-    res.json(data);
-  },
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await userServices.createUserIntoDB(req.body);
+  if (result) {
+    sendResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: 'User registration successful. Welcome aboard!',
+      data: result,
+    });
+  }
+});
+
+export const userControllers = {
+  createUser,
 };
