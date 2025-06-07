@@ -1,6 +1,7 @@
 import AppError from '../../errors/AppError';
 import { IUser, TUserPayload } from './user.interface';
 import { User } from './user.model';
+import { sendEmailVerificationOTP } from './user.utils';
 
 //Create New User.
 const createUserIntoDB = async (payload: TUserPayload) => {
@@ -41,6 +42,10 @@ const createUserIntoDB = async (payload: TUserPayload) => {
   };
 
   const result = await User.create(newUser);
+  if (result) {
+    //Send Verification Email.
+    sendEmailVerificationOTP(result);
+  }
   return result;
 };
 
