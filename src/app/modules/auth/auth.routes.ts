@@ -1,9 +1,15 @@
 import { Router } from 'express';
-import { authController } from './auth.controller';
+import { authControllers } from './auth.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { authValidations } from './auth.validation';
 
 const router = Router();
 
 // Define routes
-router.get('/', authController.getAll);
+router.post(
+  '/login',
+  validateRequest(authValidations.loginValidationSchema),
+  authControllers.loginUser,
+);
 
-export default router;
+export const AuthRoutes = router;
