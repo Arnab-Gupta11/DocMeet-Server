@@ -1,9 +1,10 @@
 import AppError from '../../errors/AppError';
+import { EmailVerificationModel } from './emailVerification.model';
 import { IUser, TUserPayload } from './user.interface';
 import { User } from './user.model';
 import { sendEmailVerificationOTP } from './user.utils';
 
-//Create New User.
+/* ---------> Create new user. <----------- */
 const createUserIntoDB = async (payload: TUserPayload) => {
   const { fullName, email, password, confirmedPassword, gender } = payload;
   // Check if all required fields are provided
@@ -49,6 +50,69 @@ const createUserIntoDB = async (payload: TUserPayload) => {
   return result;
 };
 
+/* ---------> User Email Verification. <----------- */
+const verifyUserEmailInDB = async (id: string, otp: string) => {
+  // Check if all required fields are provided
+  if (!otp) {
+    throw new AppError(400, 'OTP is required.');
+  }
+
+  // Fetch user details using the provided email
+  const existingUser = await User.findById(id);
+
+  // Check if email does not exist in the database
+  if (!existingUser) {
+    throw new AppError(404, 'No user found please register with new email.');
+  }
+
+  // Verify if the email is already verified.
+  if (existingUser.isVerified) {
+    throw new AppError(400, 'Email is already verified.');
+  }
+
+  // Fetch the email verification record matching the user and OTP.
+  const emailVerification = await EmailVerificationModel.findOne({
+    userId: existingUser._id,
+    otp,
+  });
+
+  // Handle invalid OTP
+  if (!emailVerification) {
+    if (!existingUser.isVerified) {
+      // Resend a new OTP if the email is not verified.
+      await sendEmailVerificationOTP(existingUser);
+      throw new AppError(
+        422,
+        'Invalid OTP. A new OTP has been sent to your email.',
+      );
+    }
+    throw new AppError(422, 'Invalid OTP.');
+  }
+
+  // Check if the OTP has expired.
+  const currentTime = new Date();
+  const expireationTime = new Date(
+    emailVerification.createdAt.getTime() + 15 * 60 * 1000,
+  );
+  if (currentTime > expireationTime) {
+    // Resend a new OTP if the previous one has expired
+    await sendEmailVerificationOTP(existingUser);
+    throw new AppError(
+      422,
+      'OTP has expired. A new OTP has been sent to your email.',
+    );
+  }
+  // Mark the user's email as verified
+  existingUser.isVerified = true;
+  await existingUser.save();
+
+  // Delete all email verification records for this user.
+  await EmailVerificationModel.deleteMany({ userId: existingUser._id });
+
+  return true;
+};
+
 export const userServices = {
   createUserIntoDB,
+  verifyUserEmailInDB,
 };
