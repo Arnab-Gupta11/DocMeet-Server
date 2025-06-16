@@ -7,7 +7,7 @@ const router = Router();
 
 // Define routes
 router.post(
-  '/',
+  '/register',
   validateRequest(createUserValidationSchema),
   userControllers.createUser,
 );

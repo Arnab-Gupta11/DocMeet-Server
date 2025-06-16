@@ -17,8 +17,8 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
     isVerified: { type: Boolean, default: false },
     role: {
       type: String,
-      enum: ['UNASSIGNED', 'PATIENT', 'DOCTOR', 'ADMIN'],
-      default: 'UNASSIGNED',
+      enum: ['PATIENT', 'DOCTOR', 'ADMIN'],
+      required: true,
     },
   },
   { timestamps: true },

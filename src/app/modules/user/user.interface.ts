@@ -11,14 +11,14 @@ export interface IUser extends Document {
   profileImage: string;
   gender: 'male' | 'female' | 'other';
   isVerified?: boolean;
-  role: 'UNASSIGNED' | 'PATIENT' | 'DOCTOR' | 'ADMIN';
+  role: 'PATIENT' | 'DOCTOR' | 'ADMIN';
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export type TUserPayload = Pick<
   IUser,
-  'fullName' | 'email' | 'password' | 'gender'
+  'fullName' | 'email' | 'password' | 'gender' | 'role'
 > & { confirmedPassword: string };
 
 export type TEmailVerification = {
