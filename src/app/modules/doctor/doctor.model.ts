@@ -1,15 +1,95 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
+import { IDoctor } from './doctor.interface';
 
-export interface IDoctorModel extends Document {
-  name: string;
-  // add more fields here
-}
+const DoctorSchema = new Schema<IDoctor>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    bio: { type: String, default: '' },
+    phone: { type: String, required: true },
+    profilePicture: { type: String, default: '' },
+    experienceYears: { type: Number, default: 0 },
+    department: { type: String, default: '' },
+    designation: { type: String, default: '' },
+    specialties: { type: String, default: '' },
+    qualifications: { type: String, default: '' },
+    languages: { type: String, default: ''  },
+    consultationFee: { type: Number, default: 0 },
 
-const doctorSchema = new Schema<IDoctorModel>({
-  name: { type: String, required: true },
-  // add more fields here
-});
+    education: {
+      type: [
+        {
+          degree: String,
+          institution: String,
+          startDate: Number,
+          endDate: Number,
+        },
+      ],
+      default: [],
+    },
 
-const doctorModel = model<IDoctorModel>('Doctor', doctorSchema);
+    experiences: {
+      type: [
+        {
+          title: String,
+          institution: String,
+          startDate: Number,
+          endDate: Number,
+        },
+      ],
+      default: [],
+    },
 
-export default doctorModel;
+    awards: {
+      type: [
+        {
+          awardName: String,
+          date: Date,
+          description: String,
+        },
+      ],
+      default: [],
+    },
+
+    services: { type: [String], default: [] },
+
+    clinicLocation: {
+      address: { type: String, default: '' },
+      city: { type: String, default: '' },
+      state: { type: String, default: '' },
+      country: { type: String, default: '' },
+      zip: { type: String, default: '' },
+      landmark: { type: String, default: '' },
+    },
+
+    isblocked: { type: Boolean, default: false },
+    isVerifiedDoctor: { type: Boolean, default: false },
+
+    ratings: {
+      average: { type: Number, default: 0 },
+      totalRatings: { type: Number, default: 0 },
+    },
+
+    verification: {
+      bmdcNumber: { type: String, required: true },
+      doctorType: { type: String, enum: ['MBBS', 'BDS'], required: true },
+      certificateImage: { type: String, required: true },
+      credentialsUrl: { type: String, required: true },
+      nationalId: { type: String, required: true },
+      workplace: { type: String, required: true },
+      status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending',
+      },
+      verifiedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+      submittedAt: { type: Date, default: Date.now },
+      verifiedAt: { type: Date },
+      adminRemarks: { type: String, default: '' },
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+export const DoctorModel = model<IDoctor>('Doctor', DoctorSchema);
