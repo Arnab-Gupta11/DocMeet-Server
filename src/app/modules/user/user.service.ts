@@ -6,9 +6,17 @@ import { sendEmailVerificationOTP } from './user.utils';
 
 /* ---------> Create new user. <----------- */
 const createUserIntoDB = async (payload: TUserPayload) => {
-  const { fullName, email, password, confirmedPassword, gender, role } = payload;
+  const { fullName, email, password, confirmedPassword, gender, role } =
+    payload;
   // Check if all required fields are provided
-  if (!fullName || !email || !password || !confirmedPassword || !gender || !role) {
+  if (
+    !fullName ||
+    !email ||
+    !password ||
+    !confirmedPassword ||
+    !gender ||
+    !role
+  ) {
     throw new AppError(
       400,
       'All fields (Full Name, Email, Password, Confirmed Password, gender) are required.',
@@ -40,7 +48,7 @@ const createUserIntoDB = async (payload: TUserPayload) => {
     password: hashPassword,
     gender,
     profileImage: `https://avatar.iran.liara.run/username?username=${fullName}&bold=false&length=1`,
-    role
+    role,
   };
 
   const result = await User.create(newUser);

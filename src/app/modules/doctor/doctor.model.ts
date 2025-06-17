@@ -6,13 +6,12 @@ const DoctorSchema = new Schema<IDoctor>(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     bio: { type: String, default: '' },
     phone: { type: String, required: true },
-    profilePicture: { type: String, default: '' },
     experienceYears: { type: Number, default: 0 },
-    department: { type: String, default: '' },
+    department: { type: String, required: true },
     designation: { type: String, default: '' },
     specialties: { type: String, default: '' },
     qualifications: { type: String, default: '' },
-    languages: { type: String, default: ''  },
+    languages: { type: String, default: '' },
     consultationFee: { type: Number, default: 0 },
 
     education: {
@@ -61,8 +60,8 @@ const DoctorSchema = new Schema<IDoctor>(
       landmark: { type: String, default: '' },
     },
 
-    isblocked: { type: Boolean, default: false },
     isVerifiedDoctor: { type: Boolean, default: false },
+    profileCompletion: { type: Number, default: 0 },
 
     ratings: {
       average: { type: Number, default: 0 },
@@ -92,4 +91,4 @@ const DoctorSchema = new Schema<IDoctor>(
   },
 );
 
-export const DoctorModel = model<IDoctor>('Doctor', DoctorSchema);
+export const Doctor = model<IDoctor>('Doctor', DoctorSchema);

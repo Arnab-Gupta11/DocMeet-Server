@@ -18,11 +18,24 @@ interface IAwards {
   date: Date;
   description: string;
 }
+
+export interface IVerfication {
+  bmdcNumber: string;
+  doctorType: 'MBBS' | 'BDS';
+  certificateImage: string;
+  credentialsUrl: string;
+  nationalId?: string;
+  workplace: string;
+  status: 'pending' | 'approved' | 'rejected';
+  verifiedBy?: mongoose.Types.ObjectId;
+  submittedAt: Date;
+  verifiedAt?: Date;
+  adminRemarks?: string;
+}
 export interface IDoctor extends Document {
   userId: mongoose.Types.ObjectId;
   bio?: string;
   phone: string;
-  profilePicture?: string;
   experienceYears: number;
   department: string;
   designation: string;
@@ -45,27 +58,16 @@ export interface IDoctor extends Document {
     landmark?: string;
   };
 
-  isblocked: boolean;
+  
   isVerifiedDoctor: boolean;
+  profileCompletion: number;
 
   ratings: {
     average: number;
     totalRatings: number;
   };
 
-  verification: {
-    bmdcNumber: string;
-    doctorType: 'MBBS' | 'BDS';
-    certificateImage: string;
-    credentialsUrl: string;
-    nationalId?: string;
-    workplace: string;
-    status: 'pending' | 'approved' | 'rejected';
-    verifiedBy?: mongoose.Types.ObjectId;
-    submittedAt: Date;
-    verifiedAt?: Date;
-    adminRemarks?: string;
-  };
+  verification: IVerfication;
 
   createdAt: Date;
   updatedAt: Date;

@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
       enum: ['male', 'female', 'other'],
       required: true,
     },
+    isBlocked: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     role: {
       type: String,
