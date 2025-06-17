@@ -41,3 +41,5 @@ const auth = (...requiredRoles: TUserRole[]) => {
     next();
   });
 };
+
+export default auth;

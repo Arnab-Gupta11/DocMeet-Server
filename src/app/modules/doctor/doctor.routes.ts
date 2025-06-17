@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { doctorController } from './doctor.controller';
+import { doctorControllers } from './doctor.controller';
+import auth from '../../middlewares/auth';
 
 const router = Router();
 
 // Define routes
-router.get('/', doctorController.getAll);
+router.get('/verify-doctor', auth('doctor'), doctorControllers.verifyDoctor);
 
-export default router;
+export const DoctorRoutes = router;
