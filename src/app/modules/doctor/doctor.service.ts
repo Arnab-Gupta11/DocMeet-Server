@@ -37,32 +37,9 @@ const verifyDoctor = async (
       );
     }
 
-    // ✅ If rejected: Allow update and re-submit
-    if (status === 'rejected') {
-      existingDoctor.phone = payload.phone;
-      existingDoctor.department = payload.department;
-      existingDoctor.verification = {
-        bmdcNumber: payload.bmdcNumber,
-        doctorType: payload.doctorType,
-        certificateImage: payload.certificateImage,
-        credentialsUrl: payload.credentialsUrl,
-        nationalId: payload.nationalId,
-        workplace: payload.workplace,
-        status: 'pending',
-        submittedAt: new Date(),
-      };
-
-      await existingDoctor.save();
-      return existingDoctor;
-    }
-  }
-
-  // Case 2: New doctor verification
-  const newDoctor = await Doctor.create({
-    userId: user._id,
-    phone: payload.phone,
-    department: payload.department,
-    verification: {
+    existingDoctor.phone = payload.phone;
+    existingDoctor.department = payload.department;
+    existingDoctor.verification = {
       bmdcNumber: payload.bmdcNumber,
       doctorType: payload.doctorType,
       certificateImage: payload.certificateImage,
@@ -71,12 +48,14 @@ const verifyDoctor = async (
       workplace: payload.workplace,
       status: 'pending',
       submittedAt: new Date(),
-    },
-  });
+    };
 
-  return newDoctor;
+    await existingDoctor.save();
+    return existingDoctor;
+  }
 };
 
 export const doctorServices = {
   verifyDoctor,
+  
 };

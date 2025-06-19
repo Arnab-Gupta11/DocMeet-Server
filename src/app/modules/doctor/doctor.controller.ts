@@ -15,4 +15,5 @@ const verifyDoctor = catchAsync(async (req: Request, res: Response) => {
 
 export const doctorControllers = {
   verifyDoctor,
+
 };

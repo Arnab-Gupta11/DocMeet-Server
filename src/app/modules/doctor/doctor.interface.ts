@@ -26,7 +26,7 @@ export interface IVerfication {
   credentialsUrl: string;
   nationalId?: string;
   workplace: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   verifiedBy?: mongoose.Types.ObjectId;
   submittedAt: Date;
   verifiedAt?: Date;
@@ -58,7 +58,6 @@ export interface IDoctor extends Document {
     landmark?: string;
   };
 
-  
   isVerifiedDoctor: boolean;
   profileCompletion: number;
 

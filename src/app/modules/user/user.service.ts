@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
+import { Doctor } from '../doctor/doctor.model';
 import { EmailVerificationModel } from './emailVerification.model';
 import { IUser, TUserPayload } from './user.interface';
 import { User } from './user.model';
@@ -8,55 +10,76 @@ import { sendEmailVerificationOTP } from './user.utils';
 const createUserIntoDB = async (payload: TUserPayload) => {
   const { fullName, email, password, confirmedPassword, gender, role } =
     payload;
-  // Check if all required fields are provided
-  if (
-    !fullName ||
-    !email ||
-    !password ||
-    !confirmedPassword ||
-    !gender ||
-    !role
-  ) {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+    // Check if all required fields are provided
+    if (
+      !fullName ||
+      !email ||
+      !password ||
+      !confirmedPassword ||
+      !gender ||
+      !role
+    ) {
+      throw new AppError(
+        400,
+        'All fields (Full Name, Email, Password, Confirmed Password, gender) are required.',
+      );
+    }
+
+    // Check if password and password_confirmation match
+    if (password !== confirmedPassword) {
+      throw new AppError(
+        400,
+        'Passwords do not match. Please ensure both password fields are identical.',
+      );
+    }
+
+    //Check if User is already exist
+    const doesEmailExist = await User.exists({ email });
+    if (doesEmailExist) {
+      throw new AppError(
+        409,
+        'A user with this email already exists. Please try logging in or use a different email.',
+      );
+    }
+    //generate hash password.
+    const hashPassword = await User.generateHashPassword(password);
+
+    const newUserInfo = {
+      fullName,
+      email,
+      password: hashPassword,
+      gender,
+      profileImage: `https://avatar.iran.liara.run/username?username=${fullName}&bold=false&length=1`,
+      role,
+    };
+
+    const newUser = await User.create([newUserInfo], { session });
+    if (role === 'DOCTOR') {
+      const newDoctor = await Doctor.create([{ userId: newUser[0]._id }], {
+        session,
+      });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    //Send email verification otp.
+    sendEmailVerificationOTP(newUser[0]);
+
+    return newUser[0];
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     throw new AppError(
-      400,
-      'All fields (Full Name, Email, Password, Confirmed Password, gender) are required.',
+      500,
+      'Something went wrong while creating the user. Please try again.',
     );
   }
-
-  // Check if password and password_confirmation match
-  if (password !== confirmedPassword) {
-    throw new AppError(
-      400,
-      'Passwords do not match. Please ensure both password fields are identical.',
-    );
-  }
-
-  //Check if User is already exist
-  const doesEmailExist = await User.exists({ email });
-  if (doesEmailExist) {
-    throw new AppError(
-      409,
-      'A user with this email already exists. Please try logging in or use a different email.',
-    );
-  }
-  //generate hash password.
-  const hashPassword = await User.generateHashPassword(password);
-
-  const newUser = {
-    fullName,
-    email,
-    password: hashPassword,
-    gender,
-    profileImage: `https://avatar.iran.liara.run/username?username=${fullName}&bold=false&length=1`,
-    role,
-  };
-
-  const result = await User.create(newUser);
-  if (result) {
-    //Send Verification Email.
-    sendEmailVerificationOTP(result);
-  }
-  return result;
 };
 
 /* ---------> User Email Verification. <----------- */
