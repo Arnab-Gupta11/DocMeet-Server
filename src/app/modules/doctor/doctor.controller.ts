@@ -13,7 +13,20 @@ const verifyDoctor = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getDoctorVerificationStatus = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await doctorServices.getDoctorVerificationStatus(id);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Doctor details fetched successfully.',
+      data: result,
+    });
+  },
+);
+
 export const doctorControllers = {
   verifyDoctor,
-
+  getDoctorVerificationStatus,
 };

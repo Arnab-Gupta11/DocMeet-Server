@@ -6,5 +6,6 @@ const router = Router();
 
 // Define routes
 router.get('/verify-doctor', auth('doctor'), doctorControllers.verifyDoctor);
+router.get('/doctor-status/:id', doctorControllers.getDoctorVerificationStatus);
 
 export const DoctorRoutes = router;

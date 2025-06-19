@@ -55,7 +55,12 @@ const verifyDoctor = async (
   }
 };
 
+const getDoctorVerificationStatus = async (id: string) => {
+  const result = await Doctor.findOne({ userId: id }).select('verification');
+  return { verificationStatus: result?.verification.status };
+};
+
 export const doctorServices = {
   verifyDoctor,
-  
+  getDoctorVerificationStatus,
 };
